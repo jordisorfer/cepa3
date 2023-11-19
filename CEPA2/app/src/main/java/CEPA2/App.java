@@ -3,12 +3,467 @@
  */
 package CEPA2;
 
+import static CEPA2.HibernateUtil.getSessionFactory;
+import CEPA2.model.Autor;
+import CEPA2.model.Curso;
+import CEPA2.model.Estudiante;
+import CEPA2.model.Libro;
+import java.util.List;
+import java.util.Scanner;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+
+    static Scanner scanner = new Scanner(System.in);
+    static Session sesion = getSessionFactory().openSession();
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+
+        shell();
+
     }
+
+    public static void shell() {
+        while (true) {
+            while (true) {
+                System.out.println("Escoge una opción:");
+                System.out.println("1. Opciones de Autor");
+                System.out.println("2. Opciones de Libro");
+                System.out.println("3. Opciones de Curso");
+                System.out.println("4. Opciones de Estudiante");
+                System.out.println("5. Mostrar Todos los Datos");
+                System.out.println("X. Salir");
+
+                String opcion = scanner.nextLine();
+
+                switch (opcion) {
+                    case "1":
+                        shellAutor();
+                        break;
+                    case "2":
+                        shellLibro();
+                        break;
+                    case "3":
+                        shellCurso();
+                        break;
+                    case "4":
+                        shellEstudiante();
+                        break;
+                    case "5":
+                        mostrarTodosLosDatos();
+                        break;
+                    case "X":
+                    case "x":
+                        System.out.println("Saliendo...");
+                        return;
+                    default:
+                        System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                        break;
+                }
+            }
+        }
+    }
+
+    public static void shellAutor() {
+        while (true) {
+            System.out.println("Escoge una opción:");
+            System.out.println("1. Crear Autor");
+            System.out.println("2. Mostrar Autor");
+            System.out.println("3. Actualizar Autor");
+            System.out.println("4. Eliminar Autor");
+            System.out.println("X. Salir");
+
+            String opcion = scanner.nextLine();
+
+            switch (opcion) {
+                case "1":
+                    crearAutor();
+                    break;
+                case "2":
+                    leerAutor();
+                    break;
+                case "3":
+                    actualizarAutor();
+                    break;
+                case "4":
+                    eliminarAutor();
+                    break;
+                case "X":
+                case "x":
+                    System.out.println("Saliendo");
+                    return;
+                default:
+                    System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                    break;
+            }
+        }
+    }
+
+    public static void shellEstudiante() {
+        while (true) {
+            System.out.println("Escoge una opción para Estudiantes:");
+            System.out.println("1. Crear Estudiante");
+            System.out.println("2. Mostrar Estudiante");
+            System.out.println("3. Actualizar Estudiante");
+            System.out.println("4. Eliminar Estudiante");
+            System.out.println("X. Salir");
+
+            String opcion = scanner.nextLine();
+
+            switch (opcion) {
+                case "1":
+                    crearEstudiante();
+                    break;
+                case "2":
+                    leerEstudiante();
+                    break;
+                case "3":
+                    actualizarEstudiante();
+                    break;
+                case "4":
+                    eliminarEstudiante();
+                    break;
+                case "X":
+                case "x":
+                    System.out.println("Saliendo del menú de Estudiantes");
+                    return;
+                default:
+                    System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                    break;
+            }
+        }
+    }
+
+    public static void shellCurso() {
+        while (true) {
+            System.out.println("Escoge una opción para Cursos:");
+            System.out.println("1. Crear Curso");
+            System.out.println("2. Mostrar Curso");
+            System.out.println("3. Actualizar Curso");
+            System.out.println("4. Eliminar Curso");
+            System.out.println("X. Salir");
+
+            String opcion = scanner.nextLine();
+
+            switch (opcion) {
+                case "1":
+                    crearCurso();
+                    break;
+                case "2":
+                    leerCurso();
+                    break;
+                case "3":
+                    actualizarCurso();
+                    break;
+                case "4":
+                    eliminarCurso();
+                    break;
+                case "X":
+                case "x":
+                    System.out.println("Saliendo del menú de Cursos");
+                    return;
+                default:
+                    System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                    break;
+            }
+        }
+    }
+
+    public static void shellLibro() {
+        while (true) {
+            System.out.println("Escoge una opción para Libros:");
+            System.out.println("1. Crear Libro");
+            System.out.println("2. Mostrar Libro");
+            System.out.println("3. Actualizar Libro");
+            System.out.println("4. Eliminar Libro");
+            System.out.println("X. Salir");
+
+            String opcion = scanner.nextLine();
+
+            switch (opcion) {
+                case "1":
+                    crearLibro();
+                    break;
+                case "2":
+                    leerLibro();
+                    break;
+                case "3":
+                    actualizarLibro();
+                    break;
+                case "4":
+                    eliminarLibro();
+                    break;
+                case "X":
+                case "x":
+                    System.out.println("Saliendo del menú de Libros");
+                    return;
+                default:
+                    System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                    break;
+            }
+        }
+    }
+
+    public static void mostrarTodosLosDatos() {
+        Query<Autor> qa = sesion.createQuery("from Autor");
+        List<Autor> autors = qa.list();
+        Query<Estudiante> qe = sesion.createQuery("from Estudiante");
+        List<Estudiante> estudiantes = qe.list();
+        Query<Libro> ql = sesion.createQuery("from Libro");
+        List<Libro> libros = ql.list();
+        Query<Curso> qc = sesion.createQuery("from Curso");
+        List<Curso> cursos = qc.list();
+        System.out.println("Autores:");
+        for (Autor autor : autors) {
+            System.out.println(autor.toString());
+        }
+        System.out.println("Libros:");
+        for (Libro libro : libros) {
+            System.out.println(libro.toString());
+        }
+        System.out.println("Cursos:");
+        for (Curso curso : cursos) {
+            System.out.println(curso.toString());
+        }
+        System.out.println("Estudiantes");
+        for (Estudiante estudiante : estudiantes) {
+            System.out.println(estudiante.toString());
+        }
+    }
+
+    private static void crearAutor() {
+        Autor autor = new Autor();
+        System.out.println("Introduce el nombre del autor:");
+        String nombre = scanner.nextLine();
+        autor.setNombre(nombre);
+
+        sesion.persist(autor);
+        System.out.println("Autor creado exitosamente.");
+    }
+
+    private static void leerAutor() {
+        System.out.println("Introduce el ID del autor:");
+        int autorId = Integer.parseInt(scanner.nextLine());
+        String sql = "Select a from Autor a where a.AutorID=" + autorId;
+        Query q = sesion.createQuery(sql);
+        Autor autor = (Autor) q.uniqueResult();
+        System.out.println(autor.toString());
+    }
+
+    private static void actualizarAutor() {
+        System.out.println("Introduce el ID del autor a actualizar:");
+        int autorId = Integer.parseInt(scanner.nextLine());
+
+        Autor autor = sesion.get(Autor.class, autorId);
+
+        if (autor != null) {
+
+            System.out.println(autor.toString());
+            System.out.println("Introduce el nuevo nombre del autor:");
+            String nuevoNombre = scanner.nextLine();
+            autor.setNombre(nuevoNombre);
+
+            sesion.update(autor);
+
+        } else {
+            System.out.println("Autor no encontrado con el ID: " + autorId);
+
+        }
+    }
+
+    private static void eliminarAutor() {
+        System.out.println("Introduce el ID del autor a eliminar:");
+        int autorId = Integer.parseInt(scanner.nextLine());
+
+        Autor autor = sesion.get(Autor.class, autorId);
+
+        if (autor != null) {
+
+            sesion.delete(autor);
+
+            System.out.println("Autor eliminado exitosamente.");
+        } else {
+            System.out.println("Autor no encontrado con el ID: " + autorId);
+        }
+
+    }
+
+    private static void crearCurso() {
+        Curso curso = new Curso();
+        System.out.println("Introduce el nombre del curso:");
+        String nombre = scanner.nextLine();
+        curso.setNombre(nombre);
+
+        sesion.persist(curso);
+        System.out.println("Curso creado exitosamente.");
+    }
+
+    private static void leerCurso() {
+        System.out.println("Introduce el ID del curso:");
+        int cursoId = Integer.parseInt(scanner.nextLine());
+        String sql = "Select c from Curso c where c.cursoID=" + cursoId;
+        Query q = sesion.createQuery(sql);
+        Curso curso = (Curso) q.uniqueResult();
+        System.out.println(curso.toString());
+    }
+
+    private static void actualizarCurso() {
+        System.out.println("Introduce el ID del curso a actualizar:");
+        int cursoId = Integer.parseInt(scanner.nextLine());
+
+        Curso curso = sesion.get(Curso.class, cursoId);
+
+        if (curso != null) {
+
+            System.out.println(curso.toString());
+            System.out.println("Introduce el nuevo nombre del curso:");
+            String nuevoNombre = scanner.nextLine();
+            curso.setNombre(nuevoNombre);
+
+            sesion.update(curso);
+
+        } else {
+            System.out.println("Curso no encontrado con el ID: " + cursoId);
+
+        }
+    }
+
+    private static void eliminarCurso() {
+        System.out.println("Introduce el ID del curso a eliminar:");
+        int cursoId = Integer.parseInt(scanner.nextLine());
+
+        Curso curso = sesion.get(Curso.class, cursoId);
+
+        if (curso != null) {
+
+            sesion.delete(curso);
+
+            System.out.println("Curso eliminado exitosamente.");
+        } else {
+            System.out.println("Curso no encontrado con el ID: " + cursoId);
+        }
+    }
+
+    private static void crearEstudiante() {
+        Estudiante estudiante = new Estudiante();
+        System.out.println("Introduce el nombre del estudiante:");
+        String nombre = scanner.nextLine();
+        estudiante.setNombre(nombre);
+
+        sesion.persist(estudiante);
+        System.out.println("Estudiante creado exitosamente.");
+    }
+
+    private static void leerEstudiante() {
+        System.out.println("Introduce el ID del estudiante:");
+        int estudianteId = Integer.parseInt(scanner.nextLine());
+        String sql = "Select e from Estudiante e where e.estudianteID=" + estudianteId;
+        Query q = sesion.createQuery(sql);
+        Estudiante estudiante = (Estudiante) q.uniqueResult();
+        System.out.println(estudiante.toString());
+    }
+
+    private static void actualizarEstudiante() {
+        System.out.println("Introduce el ID del estudiante a actualizar:");
+        int estudianteId = Integer.parseInt(scanner.nextLine());
+
+        Estudiante estudiante = sesion.get(Estudiante.class, estudianteId);
+
+        if (estudiante != null) {
+
+            System.out.println(estudiante.toString());
+            System.out.println("Introduce el nuevo nombre del estudiante:");
+            String nuevoNombre = scanner.nextLine();
+            estudiante.setNombre(nuevoNombre);
+
+            sesion.update(estudiante);
+
+        } else {
+            System.out.println("Estudiante no encontrado con el ID: " + estudianteId);
+
+        }
+    }
+
+    private static void eliminarEstudiante() {
+        System.out.println("Introduce el ID del estudiante a eliminar:");
+        int estudianteId = Integer.parseInt(scanner.nextLine());
+
+        Estudiante estudiante = sesion.get(Estudiante.class, estudianteId);
+
+        if (estudiante != null) {
+
+            sesion.delete(estudiante);
+
+            System.out.println("Estudiante eliminado exitosamente.");
+        } else {
+            System.out.println("Estudiante no encontrado con el ID: " + estudianteId);
+        }
+
+    }
+
+    private static void crearLibro() {
+        Libro libro = new Libro();
+        System.out.println("Introduce el título del libro:");
+        String titulo = scanner.nextLine();
+        libro.setTitulo(titulo);
+
+        System.out.println("Introduce el ID del autor del libro:");
+        int autorId = Integer.parseInt(scanner.nextLine());
+        Autor autor = sesion.get(Autor.class, autorId);
+        libro.setAutor(autor);
+
+        sesion.persist(libro);
+        System.out.println("Libro creado exitosamente.");
+    }
+
+    private static void leerLibro() {
+        System.out.println("Introduce el ID del libro:");
+        int libroId = Integer.parseInt(scanner.nextLine());
+        String sql = "Select l from Libro l where l.libroID=" + libroId;
+        Query q = sesion.createQuery(sql);
+        Libro libro = (Libro) q.uniqueResult();
+        System.out.println(libro.toString());
+    }
+
+    private static void actualizarLibro() {
+        System.out.println("Introduce el ID del libro a actualizar:");
+        int libroId = Integer.parseInt(scanner.nextLine());
+
+        Libro libro = sesion.get(Libro.class, libroId);
+
+        if (libro != null) {
+
+            System.out.println(libro.toString());
+            System.out.println("Introduce el nuevo título del libro:");
+            String nuevoTitulo = scanner.nextLine();
+            libro.setTitulo(nuevoTitulo);
+
+            sesion.update(libro);
+
+        } else {
+            System.out.println("Libro no encontrado con el ID: " + libroId);
+
+        }
+    }
+
+    private static void eliminarLibro() {
+        System.out.println("Introduce el ID del libro a eliminar:");
+        int libroId = Integer.parseInt(scanner.nextLine());
+
+        Libro libro = sesion.get(Libro.class, libroId);
+
+        if (libro != null) {
+
+            sesion.delete(libro);
+
+            System.out.println("Libro eliminado exitosamente.");
+        } else {
+            System.out.println("Libro no encontrado con el ID: " + libroId);
+        }
+
+    }
+
 }
